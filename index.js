@@ -1,22 +1,15 @@
 'use strict';
 const express = require('express');
 const mysql = require('mysql');
-// const fs = require('fs');
-// const csv = require('csv-parser');
 const bodyParser = require('body-parser');
 const app = express();
-// var async = require('async');
-
-//app.use(express.static('web'));
 app.use(bodyParser.json({ limit: '10mb', extended: true }));
-//app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 var cors = require('cors');
 app.use(cors());
 
 const db_credentials = require('./db_credentials');
-var conn = mysql.createConnection(db_credentials);
+var conn = mysql.createPool(db_credentials);
 
-// const courses_code_09 = require('./courses_code_09');
 
 /*APP*/
 var port = process.env.PORT || 3000;
