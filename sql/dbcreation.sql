@@ -30,10 +30,12 @@ CREATE TABLE bodega (
 
 CREATE TABLE cliente (
     id_cliente     INTEGER NOT NULL  PRIMARY KEY AUTO_INCREMENT,
-    nit            VARCHAR(50) NOT NULL UNIQUE,
-    dpi            INTEGER NOT NULL UNIQUE,
+    nombre         VARCHAR(200) NOT NULL,
+    nit            VARCHAR(50) NOT NULL,
+    dpi            INTEGER NOT NULL,
     direccion      VARCHAR(500) NOT NULL,
-    id_sede   INTEGER NOT NULL
+    id_sede   INTEGER NOT NULL,
+    UNIQUE KEY(nit,dpi,sede)
 );
 
 

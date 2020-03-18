@@ -135,3 +135,43 @@ app.delete('/bodega', function (req, res) {
     });
 });
 
+//cliente
+
+app.get('/cliente', function (req, res) {
+    conn.query(`SELECT * FROM cliente`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/cliente/:id', function (req, res) {
+    conn.query(`SELECT * FROM cliente WHERE id_cliente=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/cliente', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO cliente(nombre, nit, dpi, direccion, id_sede) VALUES(?,?,?,?)', [body.nombre, body.nit, body.dpi, body.direccion, body.id_sede], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/cliente', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE cliente SET nombre=?, nit=?, dpi=?, direccion=?, id_sede=? WHERE id_cliente = ?', [body.nombre, body.nit, body.dpi, body.direccion, body.id_sede, body.id_cliente], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/cliente', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM cliente WHERE id_cliente = ?', [body.id_cliente], function (err, result) {
+        if (err) throw err;
+        res.send({ requested: result });
+    });
+});
