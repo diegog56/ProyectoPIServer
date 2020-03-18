@@ -13,8 +13,8 @@ app.use(bodyParser.json({ limit: '10mb', extended: true }));
 var cors = require('cors');
 app.use(cors());
 
-// const db_credentials = require('./db_credentials');
-// var conn = mysql.createConnection(db_credentials);
+const db_credentials = require('./db_credentials');
+var conn = mysql.createConnection(db_credentials);
 
 // const courses_code_09 = require('./courses_code_09');
 
@@ -29,4 +29,11 @@ app.get('/', function (req, res) {
         res.send('Server running at ' + add + ':' + port);
     })*/
     res.send('Welcome to FIUSAC');
+});
+
+app.get('/prueba', function (req, res) {
+    conn.query('SELECT * FROM prueba', function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
 });
