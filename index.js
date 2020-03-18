@@ -21,11 +21,14 @@ app.get('/', function (req, res) {
     /*require('dns').lookup(require('os').hostname(), function (err, add, fam) {
         res.send('Server running at ' + add + ':' + port);
     })*/
-    res.send('Welcome to FIUSAC');
+    res.send('Welcome to PI');
 });
 
-app.get('/prueba', function (req, res) {
-    conn.query('SELECT * FROM prueba', function (err, result) {
+app.get('/locations', function (req, res) {
+    conn.query(`SELECT d.nombre,m.nombre
+                FROM departamento d
+                INNER JOIN municipio m
+                    ON m.id_departamento=d.id_departamento`, function (err, result) {
         if (err) throw err;
         res.send(result);
     });
