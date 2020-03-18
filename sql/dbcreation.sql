@@ -99,56 +99,56 @@ CREATE TABLE venta (
 
 ALTER TABLE bodega
     ADD CONSTRAINT bodega_sede_fk FOREIGN KEY ( id_sede )
-        REFERENCES sede ( id_sede );
+        REFERENCES sede ( id_sede ) ON DELETE CASCADE;
 
 ALTER TABLE bodega
     ADD CONSTRAINT bodega_usuario_fk FOREIGN KEY ( id_usuario )
-        REFERENCES usuario ( id_usuario );
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
 
 ALTER TABLE cliente
     ADD CONSTRAINT cliente_sede_fk FOREIGN KEY ( id_sede )
-        REFERENCES sede ( id_sede );
+        REFERENCES sede ( id_sede ) ON DELETE CASCADE;
         
 ALTER TABLE detalle_productocategoria
     ADD CONSTRAINT detalle_pcc_fk FOREIGN KEY ( id_categoria )
-        REFERENCES categoria ( id_categoria );
+        REFERENCES categoria ( id_categoria ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_productocategoria
     ADD CONSTRAINT detalle_pcp_fk FOREIGN KEY ( id_producto )
-        REFERENCES producto ( id_producto );
+        REFERENCES producto ( id_producto ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_rol
     ADD CONSTRAINT detalle_rol_rol_fk FOREIGN KEY ( id_rol )
-        REFERENCES rol ( id_rol );
+        REFERENCES rol ( id_rol ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_rol
     ADD CONSTRAINT detalle_rol_usuario_fk FOREIGN KEY ( id_usuario )
-        REFERENCES usuario ( id_usuario );
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_venta
     ADD CONSTRAINT detalle_venta_producto_fk FOREIGN KEY ( id_producto )
-        REFERENCES producto ( id_producto );
+        REFERENCES producto ( id_producto ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_venta
     ADD CONSTRAINT detalle_venta_venta_fk FOREIGN KEY ( id_venta )
-        REFERENCES venta ( id_venta );
+        REFERENCES venta ( id_venta ) ON DELETE CASCADE;
 
 ALTER TABLE municipio
     ADD CONSTRAINT municipio_departamento_fk FOREIGN KEY ( id_departamento )
-        REFERENCES departamento ( id_departamento );
+        REFERENCES departamento ( id_departamento ) ON DELETE CASCADE;
 
 ALTER TABLE sede
     ADD CONSTRAINT sede_municipio_fk FOREIGN KEY ( id_municipio )
-        REFERENCES municipio ( id_municipio );
+        REFERENCES municipio ( id_municipio ) ON DELETE CASCADE;
 
 ALTER TABLE sede
     ADD CONSTRAINT sede_usuario_fk FOREIGN KEY ( id_usuario )
-        REFERENCES usuario ( id_usuario );
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
 
 ALTER TABLE venta
     ADD CONSTRAINT venta_cliente_fk FOREIGN KEY ( id_cliente )
-        REFERENCES cliente ( id_cliente );
+        REFERENCES cliente ( id_cliente ) ON DELETE CASCADE;
 
 ALTER TABLE venta
     ADD CONSTRAINT venta_usuario_fk FOREIGN KEY ( id_usuario )
-        REFERENCES usuario ( id_usuario );
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;

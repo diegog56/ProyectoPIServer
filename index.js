@@ -33,3 +33,105 @@ app.get('/locations', function (req, res) {
         res.send(result);
     });
 });
+/* all tables CRUDs */
+
+//departamento
+
+app.get('/departamento', function (req, res) {
+    conn.query(`SELECT * FROM departamento`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//municipio
+
+app.get('/municipio', function (req, res) {
+    conn.query(`SELECT * FROM municipio`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//sede
+
+app.get('/sede', function (req, res) {
+    conn.query(`SELECT * FROM sede`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/sede/:id', function (req, res) {
+    conn.query(`SELECT * FROM sede WHERE id_sede=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/sede', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO sede(alias, direccion, id_usuario, id_municipio) VALUES(?,?,?,?)', [body.alias, body.direccion, body.id_usuario, body.id_municipio], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/sede', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE sede SET alias=?, direccion=?, id_usuario=?, id_municipio=? WHERE id_sede = ?', [body.alias, body.direccion, body.id_usuario, body.id_municipio,body.id_sede], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/sede', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM sede WHERE id_sede = ?', [body.id_sede], function (err, result) {
+        if (err) throw err;
+        res.send({ requested: result });
+    });
+});
+
+//bodega
+
+app.get('/bodega', function (req, res) {
+    conn.query(`SELECT * FROM bodega`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/bodega/:id', function (req, res) {
+    conn.query(`SELECT * FROM bodega WHERE id_bodega=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/bodega', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO bodega(nombre, estado, id_sede, id_usuario) VALUES(?,?,?,?)', [body.nombre, body.estado, body.id_sede, body.id_usuario], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/bodega', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE bodega SET nombre=?, estado=?, id_sede=?, id_usuario=? WHERE id_bodega = ?', [body.nombre, body.estado, body.id_sede, body.id_usuario, body.id_bodega], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/bodega', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM bodega WHERE id_bodega = ?', [body.id_bodega], function (err, result) {
+        if (err) throw err;
+        res.send({ requested: result });
+    });
+});
+
