@@ -25,7 +25,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/locations', function (req, res) {
-    conn.query(`SELECT d.nombre,m.nombre
+    conn.query(`SELECT d.nombre as departamento,m.nombre as municipio
                 FROM departamento d
                 INNER JOIN municipio m
                     ON m.id_departamento=d.id_departamento`, function (err, result) {
