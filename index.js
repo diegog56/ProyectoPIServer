@@ -24,16 +24,26 @@ app.get('/', function (req, res) {
     res.send('Welcome to PI');
 });
 
-app.get('/locations', function (req, res) {
-    conn.query(`SELECT d.nombre as departamento,m.nombre as municipio
-                FROM departamento d
-                INNER JOIN municipio m
-                    ON m.id_departamento=d.id_departamento`, function (err, result) {
+/* functions */
+
+app.get('/login', function (req, res) {
+    conn.query(`SELECT *
+                FROM usuario u
+                INNER JOIN detalle_rol dr
+                    ON dr.id_usuario=u.id_usuario
+                INNER JOIN rol ON r.id_rol=dr.id_rol
+                WHERE correo=? AND password=SHA(?)`,
+                [body.correo, body.password], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
 });
-/* all tables CRUDs */
+
+/*  all tables CRUDs
+    all tables CRUDs
+    all tables CRUDs
+    all tables CRUDs
+    all tables CRUDs */
 
 //departamento
 
