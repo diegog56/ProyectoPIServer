@@ -53,6 +53,15 @@ app.get('/municipio', function (req, res) {
     });
 });
 
+//rol
+
+app.get('/rol', function (req, res) {
+    conn.query(`SELECT * FROM rol`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
 //sede
 
 app.get('/sede', function (req, res) {
