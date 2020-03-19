@@ -296,7 +296,7 @@ app.get('/usuario/:id', function (req, res) {
 app.post('/usuario', function (req, res) {
     let body = req.body;
 
-    conn.query('INSERT INTO usuario(nombre, fecha_nacimiento, dpi, correo, password) VALUES(?,?,?,?,SHA1(?))', [body.nombre, body.fecha_nacimiento, body.dpi, body.correo, body.password], function (err, result) {
+    conn.query("INSERT INTO usuario(nombre, fecha_nacimiento, dpi, correo, password) VALUES(?,STR_TO_DATE(?,'%Y-%m-%d'),?,?,SHA1(?))", [body.nombre, body.fecha_nacimiento, body.dpi, body.correo, body.password], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
