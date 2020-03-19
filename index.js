@@ -90,7 +90,7 @@ app.delete('/sede', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM sede WHERE id_sede = ?', [body.id_sede], function (err, result) {
         if (err) throw err;
-        res.send({ requested: result });
+        res.send({ request: result });
     });
 });
 
@@ -131,7 +131,7 @@ app.delete('/bodega', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM bodega WHERE id_bodega = ?', [body.id_bodega], function (err, result) {
         if (err) throw err;
-        res.send({ requested: result });
+        res.send({ request: result });
     });
 });
 
@@ -154,7 +154,7 @@ app.get('/cliente/:id', function (req, res) {
 app.post('/cliente', function (req, res) {
     let body = req.body;
 
-    conn.query('INSERT INTO cliente(nombre, nit, dpi, direccion, id_sede) VALUES(?,?,?,?)', [body.nombre, body.nit, body.dpi, body.direccion, body.id_sede], function (err, result) {
+    conn.query('INSERT INTO cliente(nombre, nit, dpi, direccion, id_sede) VALUES(?,?,?,?,?)', [body.nombre, body.nit, body.dpi, body.direccion, body.id_sede], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
@@ -172,7 +172,7 @@ app.delete('/cliente', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM cliente WHERE id_cliente = ?', [body.id_cliente], function (err, result) {
         if (err) throw err;
-        res.send({ requested: result });
+        res.send({ request: result });
     });
 });
 
@@ -213,6 +213,249 @@ app.delete('/producto', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM producto WHERE id_producto = ?', [body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ requested: result });
+        res.send({ request: result });
+    });
+});
+
+//categoria
+
+app.get('/categoria', function (req, res) {
+    conn.query(`SELECT * FROM categoria`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/categoria/:id', function (req, res) {
+    conn.query(`SELECT * FROM categoria WHERE id_categoria=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/categoria', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO categoria(nombre) VALUES(?)', [body.nombre], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/categoria', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE categoria SET nombre=? WHERE id_categoria = ?', [body.nombre, body.id_categoria], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/categoria', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM categoria WHERE id_categoria = ?', [body.id_categoria], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//usuario
+
+app.get('/usuario', function (req, res) {
+    conn.query(`SELECT * FROM usuario`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/usuario/:id', function (req, res) {
+    conn.query(`SELECT * FROM usuario WHERE id_usuario=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/usuario', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO usuario(nombre, fecha_nacimiento, dpi, correo, password) VALUES(?,?,?,?,SHA1(?))', [body.nombre, body.fecha_nacimiento, body.dpi, body.correo, body.password], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/usuario', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE usuario SET nombre=?, fecha_nacimiento=?, dpi=?, correo=?, password=SHA1(?) WHERE id_usuario = ?', [body.nombre, body.fecha_nacimiento, body.dpi, body.correo, body.password, body.id_usuario], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/usuario', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM usuario WHERE id_usuario = ?', [body.id_usuario], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//venta
+
+app.get('/venta', function (req, res) {
+    conn.query(`SELECT * FROM venta`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/venta/:id', function (req, res) {
+    conn.query(`SELECT * FROM venta WHERE id_venta=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/venta', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO venta(fecha_facturacion, fecha_entrega, id_cliente, id_usuario) VALUES(?,?,?,?)', [body.fecha_facturacion, body.fecha_entrega, body.id_cliente, body.id_usuario], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/venta', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE venta SET fecha_facturacion=?, fecha_entrega=?, id_cliente=?, id_usuario=? WHERE id_venta = ?', [body.fecha_facturacion, body.fecha_entrega, body.id_cliente, body.id_usuario, body.id_venta], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/venta', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM venta WHERE id_venta = ?', [body.id_venta], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//detalle_rol
+
+app.get('/detalle_rol', function (req, res) {
+    conn.query(`SELECT * FROM detalle_rol`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_rol/usuario/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_rol WHERE id_usuario=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_rol/rol/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_rol WHERE id_rol=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/detalle_rol', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO detalle_rol(id_usuario,id_rol) VALUES(?,?)', [body.id_usuario, body.id_rol], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.delete('/detalle_rol', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM detalle_rol WHERE id_rol = ? AND id_usuario = ?', [body.id_rol, body.id_usuario], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//detalle_venta
+
+app.get('/detalle_venta', function (req, res) {
+    conn.query(`SELECT * FROM detalle_venta`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_venta/venta/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_venta WHERE id_venta=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_venta/producto/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_venta WHERE id_producto=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/detalle_venta', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO detalle_venta(id_venta,id_producto) VALUES(?,?)', [body.id_venta, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.delete('/detalle_venta', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM detalle_venta WHERE id_venta = ? AND id_producto = ?', [body.id_venta, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//detalle_productocategoria
+
+app.get('/detalle_productocategoria', function (req, res) {
+    conn.query(`SELECT * FROM detalle_productocategoria`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_productocategoria/producto/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_productocategoria WHERE id_producto=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_productocategoria/categoria/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_productocategoria WHERE id_categoria=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/detalle_productocategoria', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO detalle_productocategoria(id_categoria,id_producto) VALUES(?,?)', [body.id_categoria, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.delete('/detalle_productocategoria', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM detalle_productocategoria WHERE id_categoria = ? AND id_producto = ?', [body.id_categoria, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
     });
 });
