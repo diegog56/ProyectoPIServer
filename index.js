@@ -26,13 +26,15 @@ app.get('/', function (req, res) {
 
 /* functions */
 
-app.get('/login', function (req, res) {
+app.post('/login', function (req, res) {
+    let body = req.body;
+    console.log(body);
     conn.query(`SELECT *
                 FROM usuario u
                 INNER JOIN detalle_rol dr
                     ON dr.id_usuario=u.id_usuario
-                INNER JOIN rol ON r.id_rol=dr.id_rol
-                WHERE correo=? AND password=SHA(?)`,
+                INNER JOIN rol r ON r.id_rol=dr.id_rol
+                WHERE correo=? AND password=SHA1(?)`,
                 [body.correo, body.password], function (err, result) {
         if (err) throw err;
         res.send(result);
