@@ -175,3 +175,44 @@ app.delete('/cliente', function (req, res) {
         res.send({ requested: result });
     });
 });
+
+//producto
+
+app.get('/producto', function (req, res) {
+    conn.query(`SELECT * FROM producto`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/producto/:id', function (req, res) {
+    conn.query(`SELECT * FROM producto WHERE id_producto=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/producto', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO producto(nombre, descripcion, precio) VALUES(?,?,?)', [body.nombre, body.descripcion, body.precio], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/producto', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE producto SET nombre=?, descripcion=?, precio=? WHERE id_producto = ?', [body.nombre, body.descripcion, body.precio, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/producto', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM producto WHERE id_producto = ?', [body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send({ requested: result });
+    });
+});
