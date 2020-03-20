@@ -26,6 +26,10 @@ app.get('/', function (req, res) {
 
 /* functions */
 
+//PENDING asign deliver guy and date
+
+//LOGIN
+
 app.post('/login', function (req, res) {
     let body = req.body;
     console.log(body);
@@ -36,6 +40,35 @@ app.post('/login', function (req, res) {
                 INNER JOIN rol r ON r.id_rol=dr.id_rol
                 WHERE correo=? AND password=SHA1(?)`,
                 [body.correo, body.password], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//TOTAL SALES BY DATE
+
+app.get('/totalsales', function (req, res) {
+    conn.query(`SELECT v.fecha_facturacion as fecha, SUM(cantidad*precio_venta) as total
+                FROM venta v
+                INNER JOIN detalle_venta dv
+                    ON dv.id_venta=v.id_venta
+                GROUP BY v.fecha_facturacion`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//TOTAL SALES BY DATE AND SELLER
+
+app.get('/totalsalesbyseller', function (req, res) {
+    conn.query(`SELECT v.fecha_facturacion as fecha, u.nombre, SUM(cantidad*precio_venta) as total
+                FROM venta v
+                INNER JOIN detalle_venta dv
+                    ON dv.id_venta=v.id_venta
+                INNER JOIN usuario u
+                    ON u.id_usuario=v.id_usuario
+                WHERE v.id_usuario=${req.params.id}
+                GROUP BY v.fecha_facturacion`, function (err, result) {
         if (err) throw err;
         res.send(result);
     });

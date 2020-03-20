@@ -57,7 +57,9 @@ ALTER TABLE detalle_rol ADD CONSTRAINT detalle_rol_pk PRIMARY KEY ( id_usuario,
 
 CREATE TABLE detalle_venta (
     id_venta         INTEGER NOT NULL,
-    id_producto   INTEGER NOT NULL
+    id_producto   INTEGER NOT NULL,
+    cantidad INTEGER NOT NULL,
+    precio_venta FLOAT NOT NULL
 );
 
 ALTER TABLE detalle_venta ADD CONSTRAINT detalle_venta_pk PRIMARY KEY ( id_venta,
