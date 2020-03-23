@@ -27,6 +27,7 @@ app.get('/', function (req, res) {
 /* functions */
 
 //PENDING asign deliver guy and date
+//Mindi, falta agregar CRUDs para orden, transferencia y detalle_transferencia. En base a los cruds ya hechos.
 
 //LOGIN
 

@@ -101,6 +101,67 @@ CREATE TABLE venta (
     id_usuario   INTEGER NOT NULL
 );
 
+--Agregar a index.js las peticiones para CRUDs desde aca
+CREATE TABLE orden (
+    id_orden             INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    estado				 char(1),
+	id_venta   			 INTEGER NOT NULL,
+    id_repartidor  		 INTEGER NOT NULL
+);
+
+CREATE TABLE transferencia (
+    id_transferencia INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    estado				 	 char(1),
+    fecha date not null,
+    fecha_entrega date null,
+    id_bodega_ori			 INTEGER NOT NULL,
+    id_bodega_dest			 INTEGER NOT NULL,
+	id_bodeguero             INTEGER NOT NULL,
+    id_repartidor  		     INTEGER NULL
+);
+
+CREATE TABLE detalle_transferencia (
+    id_transferencia         INTEGER NOT NULL,
+    id_producto   INTEGER NOT NULL,
+    cantidad INTEGER NOT NULL
+);
+
+--Hasta aca
+
+ALTER TABLE detalle_transferencia ADD CONSTRAINT detalle_transferencia_pk PRIMARY KEY ( id_transferencia,
+                                                                        id_producto );
+ALTER TABLE detalle_transferencia
+    ADD CONSTRAINT detalle_transferencia_producto_fk FOREIGN KEY ( id_producto )
+        REFERENCES producto ( id_producto ) ON DELETE CASCADE;
+
+ALTER TABLE detalle_transferencia
+    ADD CONSTRAINT detalle_transferencia_t_fk FOREIGN KEY ( id_transferencia )
+        REFERENCES transferencia ( id_transferencia ) ON DELETE CASCADE;
+
+ALTER TABLE orden
+    ADD CONSTRAINT orden_venta_fk FOREIGN KEY ( id_venta )
+        REFERENCES venta ( id_venta ) ON DELETE CASCADE;
+        
+ALTER TABLE orden
+    ADD CONSTRAINT orden_repartidor_fk FOREIGN KEY ( id_repartidor )
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
+
+ALTER TABLE transferencia
+    ADD CONSTRAINT transferencia_bodegaori_fk FOREIGN KEY ( id_bodega_ori )
+        REFERENCES bodega ( id_bodega ) ON DELETE CASCADE;
+
+ALTER TABLE transferencia
+    ADD CONSTRAINT transferencia_bodegadest_fk FOREIGN KEY ( id_bodega_dest )
+        REFERENCES bodega ( id_bodega ) ON DELETE CASCADE;
+
+ALTER TABLE transferencia
+    ADD CONSTRAINT transferencia_bodeguero_fk FOREIGN KEY ( id_bodeguero )
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
+
+ALTER TABLE transferencia
+    ADD CONSTRAINT transferencia_repartidor_fk FOREIGN KEY ( id_repartidor )
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
+
 ALTER TABLE bodega
     ADD CONSTRAINT bodega_sede_fk FOREIGN KEY ( id_sede )
         REFERENCES sede ( id_sede ) ON DELETE CASCADE;
