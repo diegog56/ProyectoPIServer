@@ -61,7 +61,7 @@ app.get('/totalsales', function (req, res) {
 
 //TOTAL SALES BY DATE AND SELLER
 
-app.get('/totalsalesbyseller', function (req, res) {
+app.get('/totalsalesbyseller/:id', function (req, res) {
     conn.query(`SELECT v.fecha_facturacion as fecha, u.nombre, SUM(cantidad*precio_venta) as total
                 FROM venta v
                 INNER JOIN detalle_venta dv
