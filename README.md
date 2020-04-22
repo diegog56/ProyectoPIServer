@@ -4,21 +4,28 @@ API_URL: https://proyectopi-server.herokuapp.com/
 
 Para cada tabla los CRUDs están distribuidos de esta forma: 
 
+* **GET** /nombretabla seleccionar todos los elementos
 
-/nombretabla
+* **GET** /nombretabla/:id seleccionar por id
 
-GET seleccionar todos los elementos
+* **POST** /nombretabla crear nuevo elemento
 
-/nombretabla/:id GET seleccionar por id
+* **PUT** /nombretabla actualizar elemento por id
 
-POST crear nuevo elemento
-
-PUT actualizar elemento por id
-
-DELETE eliminar elemento por id
-
+* **DELETE** /nombretabla eliminar elemento por id
 
 Para las tablas de detalle:
 
+* **GET** /nombretabla/tablamaster/:id  seleccionar por id
 
-/nombretabla/tablamaster/:id GET seleccionar por id
+Funciones especificas:
+
+* **POST** /login body: {correo, password}
+
+* **GET** /totalsales ventas totales agrupadas por fecha
+
+* **GET** /totalsalesbyseller/:id ventas totales agrupadas por fecha de un id de vendedor especifico
+
+Nombre de las tablas y campos:
+
+![Image of Database](https://github.com/diegog56/ProyectoPIServer/blob/master/sql/Relational.png)
