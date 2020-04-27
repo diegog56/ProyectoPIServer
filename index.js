@@ -11,6 +11,9 @@ app.use(cors());
 const db_credentials = require('./db_credentials');
 var conn = mysql.createPool(db_credentials);
 
+app.get('/error', function(request, response){
+    response.sendFile(__dirname +'/error.html');
+});
 
 /*APP*/
 var port = process.env.PORT || 3000;
