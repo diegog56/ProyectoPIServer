@@ -8,13 +8,13 @@ Para cada tabla los CRUDs están distribuidos de esta forma:
 
 * **GET** /nombretabla/:id seleccionar por id
 
-* **POST** /nombretabla crear nuevo elemento
+* **POST** /nombretabla crear nuevo elemento body:{todos los campos obligatorios}
 
-* **PUT** /nombretabla actualizar elemento por id
+* **PUT** /nombretabla actualizar elemento por id body:{todos los campos obligatorios}
 
 * **DELETE** /nombretabla eliminar elemento por id
 
-Para las tablas de detalle:
+Para las tablas de detalle (no hay **PUT**):
 
 * **GET** /nombretabla/tablamaster/:id  seleccionar por id
 
