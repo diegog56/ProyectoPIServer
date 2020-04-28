@@ -30,8 +30,36 @@ app.get('/', function (req, res) {
 
 /* functions */
 
-//PENDING asign deliver guy and date
-//Mindi, falta agregar CRUDs para orden, transferencia y detalle_transferencia. En base a los cruds ya hechos.
+//ASIGN TRANSFER TO DISTRIBUTOR
+
+app.put('/transferencia/asignarrepartidor', function (req, res) {
+    let body = req.body;
+    conn.query("UPDATE transferencia SET estado=?, id_repartidor=?, fecha_entrega=STR_TO_DATE(?,'%Y-%m-%d') WHERE id_transferencia = ?", [body.estado, body.id_repartidor, body.fecha_entrega, body.id_transferencia], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+//GET ORDERS BY DISTRIBUTOR
+
+app.get('/orden/byrepartidor/:id', function (req, res) {
+    conn.query(`SELECT * FROM orden WHERE id_repartidor=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//GET TRANSFERS BY DISTRIBUTOR
+
+app.get('/transferencia/byrepartidor/:id', function (req, res) {
+    conn.query(`SELECT * FROM transferencia WHERE id_repartidor=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//agregar readme para nuevos end points y especificar formato de fecha
+//asignar transferencia PUT id_repartidor, fecha_entrega
 
 //LOGIN
 
@@ -84,6 +112,128 @@ app.get('/totalsalesbyseller/:id', function (req, res) {
     all tables CRUDs
     all tables CRUDs
     all tables CRUDs */
+
+//detalle_transferencia
+
+app.get('/detalle_transferencia', function (req, res) {
+    conn.query(`SELECT * FROM detalle_transferencia`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_transferencia/producto/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_transferencia WHERE id_producto=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/detalle_transferencia/transferencia/:id', function (req, res) {
+    conn.query(`SELECT * FROM detalle_transferencia WHERE id_transferencia=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/detalle_transferencia', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO detalle_transferencia(id_transferencia,id_producto,cantidad) VALUES(?,?)', [body.id_transferencia, body.id_producto, body.cantidad], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.delete('/detalle_transferencia', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM detalle_transferencia WHERE id_transferencia = ? AND id_producto = ?', [body.id_transferencia, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//transferencia
+
+app.get('/transferencia', function (req, res) {
+    conn.query(`SELECT * FROM transferencia`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/transferencia/:id', function (req, res) {
+    conn.query(`SELECT * FROM transferencia WHERE id_transferencia=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/transferencia', function (req, res) {
+    let body = req.body;
+
+    conn.query("INSERT INTO transferencia(estado, id_bodega_ori, id_bodega_dest, id_bodeguero, fecha) VALUES(?,?,?,?,STR_TO_DATE(?,'%Y-%m-%d'))", [body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/transferencia', function (req, res) {
+    let body = req.body;
+    conn.query("UPDATE transferencia SET estado=?, id_bodega_ori=?, id_bodega_dest=?, id_bodeguero=?, fecha=STR_TO_DATE(?,'%Y-%m-%d') WHERE id_transferencia = ?", [body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha, body.id_transferencia], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/transferencia', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM transferencia WHERE id_transferencia = ?', [body.id_transferencia], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
+
+//orden
+
+app.get('/orden', function (req, res) {
+    conn.query(`SELECT * FROM orden`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/orden/:id', function (req, res) {
+    conn.query(`SELECT * FROM orden WHERE id_orden=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/orden', function (req, res) {
+    let body = req.body;
+
+    conn.query('INSERT INTO orden(estado, id_venta, id_repartidor) VALUES(?,?,?)', [body.estado, body.id_venta, body.id_repartidor], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/orden', function (req, res) {
+    let body = req.body;
+    conn.query('UPDATE orden SET estado=?, id_venta=?, id_repartidor=? WHERE id_orden = ?', [body.estado, body.id_venta, body.id_repartidor, body.id_orden], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/orden', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM orden WHERE id_orden = ?', [body.id_orden], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
 
 //departamento
 

@@ -26,6 +26,14 @@ Funciones especificas:
 
 * **GET** /totalsalesbyseller/:id ventas totales agrupadas por fecha de un id de vendedor especifico
 
+* **GET** /transferencia/byrepartidor/:id ordenes de transferencia de un repartidor
+
+* **GET** /orden/byrepartidor/:id ordenes de venta de un repartidor
+
+* **PUT** /transferencia/asignarrepartidor body:{estado, id_repartidor, fecha_entrega, id_tranferencia}
+
+**El formato para fecha es '%Y-%m-%d'**
+
 Nombre de las tablas y campos:
 
 ![Image of Database](https://github.com/diegog56/ProyectoPIServer/blob/master/sql/Relational.png)
