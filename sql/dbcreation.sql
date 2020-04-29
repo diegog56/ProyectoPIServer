@@ -126,7 +126,25 @@ CREATE TABLE detalle_transferencia (
     cantidad INTEGER NOT NULL
 );
 
---Hasta aca
+CREATE TABLE bitacora_inventario(
+    id_bitacora_inventario INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    cantidad_antigua INTEGER NOT NULL,
+    cantidad_nueva INTEGER NOT NULL,
+    descripcion VARCHAR(500) NOT NULL,
+    fecha DATE NOT NULL,
+    id_usuario INTEGER NOT NULL,
+    id_producto INTEGER NOT NULL
+);
+
+--constraints
+
+ALTER TABLE bitacora_inventario
+    ADD CONSTRAINT bitacora_inventario_producto_fk FOREIGN KEY ( id_producto )
+        REFERENCES producto ( id_producto ) ON DELETE CASCADE;
+
+ALTER TABLE bitacora_inventario
+    ADD CONSTRAINT bitacora_inventario_usuario_fk FOREIGN KEY ( id_usuario )
+        REFERENCES usuario ( id_usuario ) ON DELETE CASCADE;
 
 ALTER TABLE detalle_transferencia ADD CONSTRAINT detalle_transferencia_pk PRIMARY KEY ( id_transferencia,
                                                                         id_producto );

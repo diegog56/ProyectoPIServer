@@ -30,6 +30,34 @@ app.get('/', function (req, res) {
 
 /* functions */
 
+//GET TRANSFERENCIAS EXTERNAS
+
+app.get('/transferencia/externa', function (req, res) {
+    conn.query(`SELECT t.* FROM TRANSFERENCIA t
+    INNER JOIN BODEGA bo
+        ON bo.id_bodega=t.id_bodega_ori
+    INNER JOIN BODEGA bd
+        ON bd.id_bodega=t.id_bodega_dest
+    WHERE bo.id_sede!=bd.id_sede`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+//GET TRANSFERENCIAS INTERNAS
+
+app.get('/transferencia/interna', function (req, res) {
+    conn.query(`SELECT t.* FROM TRANSFERENCIA t
+    INNER JOIN BODEGA bo
+        ON bo.id_bodega=t.id_bodega_ori
+    INNER JOIN BODEGA bd
+        ON bd.id_bodega=t.id_bodega_dest
+    WHERE bo.id_sede=bd.id_sede`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
 //ASIGN TRANSFER TO DISTRIBUTOR
 
 app.put('/transferencia/asignarrepartidor', function (req, res) {
@@ -112,6 +140,47 @@ app.get('/totalsalesbyseller/:id', function (req, res) {
     all tables CRUDs
     all tables CRUDs
     all tables CRUDs */
+
+//bitacora_inventario
+
+app.get('/bitacora_inventario', function (req, res) {
+    conn.query(`SELECT * FROM bitacora_inventario`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.get('/bitacora_inventario/:id', function (req, res) {
+    conn.query(`SELECT * FROM bitacora_inventario WHERE id_bitacora_inventario=${req.params.id}`, function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.post('/bitacora_inventario', function (req, res) {
+    let body = req.body;
+
+    conn.query("INSERT INTO bitacora_inventario(cantidad_antigua, cantidad_nueva, descripcion, fecha, id_usuario, id_producto) VALUES(?,?,?,STR_TO_DATE(?,'%Y-%m-%d'),?,?)", [body.cantidad_antigua, body.cantidad_nueva, body.descripcion, body.fecha, body.id_usuario, body.id_producto], function (err, result) {
+        if (err) throw err;
+        res.send(result);
+    });
+});
+
+app.put('/bitacora_inventario', function (req, res) {
+    let body = req.body;
+    conn.query("UPDATE bitacora_inventario SET cantidad_antigua=?, cantidad_nueva=?, descripcion=?, fecha=STR_TO_DATE(?,'%Y-%m-%d'), id_usuario=?, id_producto=? WHERE id_bitacora_inventario = ?", [body.cantidad_antigua, body.cantidad_nueva, body.descripcion, body.fecha, body.id_usuario, body.id_producto, body.id_bitacora_inventario], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result});
+    });
+});
+
+app.delete('/bitacora_inventario', function (req, res) {
+    let body = req.body;
+    conn.query('DELETE FROM bitacora_inventario WHERE id_bitacora_inventario = ?', [body.id_bitacora_inventario], function (err, result) {
+        if (err) throw err;
+        res.send({ request: result });
+    });
+});
 
 //detalle_transferencia
 

@@ -20,7 +20,7 @@ Para las tablas de detalle (no hay **PUT**):
 
 Funciones especificas:
 
-* **POST** /login body: {correo, password}
+* **POST** /login body:{correo, password}
 
 * **GET** /totalsales ventas totales agrupadas por fecha
 
@@ -31,6 +31,10 @@ Funciones especificas:
 * **GET** /orden/byrepartidor/:id ordenes de venta de un repartidor
 
 * **PUT** /transferencia/asignarrepartidor body:{estado, id_repartidor, fecha_entrega, id_tranferencia}
+
+* **GET** /transferencia/externa transferencias entre distintas sedes
+
+* **GET** /transferencia/interna transferencias entre la misma sede
 
 **El formato para fecha es '%Y-%m-%d'**
 
