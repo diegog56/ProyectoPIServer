@@ -1,18 +1,34 @@
 'use strict';
-require ('newrelic');
+require('newrelic');
 const express = require('express');
 const mysql = require('mysql');
 const bodyParser = require('body-parser');
 const app = express();
-app.use(bodyParser.json({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({
+    limit: '10mb',
+    extended: true
+}));
 var cors = require('cors');
 app.use(cors());
 
 const db_credentials = require('./db_credentials');
 var conn = mysql.createPool(db_credentials);
 
-app.get('/error', function(request, response){
-    response.sendFile(__dirname +'/error.html');
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'publishesandsellsonline@gmail.com',
+        pass: 'publishesAndSells**'
+    },
+    tls: {
+        rejectUnauthorized: false
+    }
+});
+
+app.get('/error', function (request, response) {
+    response.sendFile(__dirname + '/error.html');
 });
 
 /*APP*/
@@ -29,6 +45,57 @@ app.get('/', function (req, res) {
 });
 
 /* functions */
+
+//RECOVER PASSWORD
+
+app.post('/recoverpassword', function (req, res) {
+    let body = req.body;
+    let id=0;
+    //verify valid email
+    conn.query(`SELECT id_usuario FROM usuario WHERE correo='` + body.correo + `'`, function (err, result) {
+        if (err) throw err;
+        if (result.length == 1) {
+            id=result[0].id_usuario;
+            body['key'] = Math.floor(Math.random() * 1000) + "";
+            var hashCode = function (s) {
+                var h = 0,
+                    l = s.length,
+                    i = 0;
+                if (l > 0)
+                    while (i < l)
+                        h = (h << 5) - h + s.charCodeAt(i++) | 0;
+                return h;
+            };
+            let hash = hashCode(JSON.stringify(body));
+            var mailOptions = {
+                from: 'publishesandsellsonline@gmail.com',
+                to: body.correo,
+                subject: '[PI] Recuperar password de ' + body.correo,
+                text: `BODEGAS\n
+            Se le ha asignado la siguiente contraseña temporal: ` + hash+`
+            tiene una validez de 15 minutos`
+            };
+            transporter.sendMail(mailOptions, function (err, info) {
+                if (err) {
+                    throw err;
+                } else {
+                    console.log('Email sent: ' + info.response);
+                    conn.query(`UPDATE usuario SET temporary='`+hash+`' WHERE id_usuario=`+id, function (err, result) {
+                        if (err) throw err;
+                        setTimeout(()=>{
+                            conn.query(`UPDATE usuario SET temporary=NULL WHERE id_usuario=`+id, function (err, result) {
+                                if (err) throw err;
+                            });
+                        },15*60*1000);
+                        res.send("Correo con contraseña temporal enviado, tiene validez de 15 minutos.");
+                    });
+                }
+            });
+        } else {
+            res.send("Correo invalido");
+        }
+    });
+});
 
 //GET TRANSFERENCIAS EXTERNAS
 
@@ -64,7 +131,9 @@ app.put('/transferencia/asignarrepartidor', function (req, res) {
     let body = req.body;
     conn.query("UPDATE transferencia SET estado=?, id_repartidor=?, fecha_entrega=STR_TO_DATE(?,'%Y-%m-%d') WHERE id_transferencia = ?", [body.estado, body.id_repartidor, body.fecha_entrega, body.id_transferencia], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -93,17 +162,12 @@ app.get('/transferencia/byrepartidor/:id', function (req, res) {
 
 app.post('/login', function (req, res) {
     let body = req.body;
-    console.log(body);
-    conn.query(`SELECT *
-                FROM usuario u
-                INNER JOIN detalle_rol dr
-                    ON dr.id_usuario=u.id_usuario
-                INNER JOIN rol r ON r.id_rol=dr.id_rol
-                WHERE correo=? AND password=SHA1(?)`,
-                [body.correo, body.password], function (err, result) {
-        if (err) throw err;
-        res.send(result);
-    });
+    conn.query(`call login(?,?)`,
+        [body.correo, body.password],
+        function (err, result) {
+            if (err) throw err;
+            res.send(result[0]);
+        });
 });
 
 //TOTAL SALES BY DATE
@@ -170,7 +234,9 @@ app.put('/bitacora_inventario', function (req, res) {
     let body = req.body;
     conn.query("UPDATE bitacora_inventario SET cantidad_antigua=?, cantidad_nueva=?, descripcion=?, fecha=STR_TO_DATE(?,'%Y-%m-%d'), id_usuario=?, id_producto=? WHERE id_bitacora_inventario = ?", [body.cantidad_antigua, body.cantidad_nueva, body.descripcion, body.fecha, body.id_usuario, body.id_producto, body.id_bitacora_inventario], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -178,7 +244,9 @@ app.delete('/bitacora_inventario', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM bitacora_inventario WHERE id_bitacora_inventario = ?', [body.id_bitacora_inventario], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -218,7 +286,9 @@ app.delete('/detalle_transferencia', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM detalle_transferencia WHERE id_transferencia = ? AND id_producto = ?', [body.id_transferencia, body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -251,7 +321,9 @@ app.put('/transferencia', function (req, res) {
     let body = req.body;
     conn.query("UPDATE transferencia SET estado=?, id_bodega_ori=?, id_bodega_dest=?, id_bodeguero=?, fecha=STR_TO_DATE(?,'%Y-%m-%d') WHERE id_transferencia = ?", [body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha, body.id_transferencia], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -259,7 +331,9 @@ app.delete('/transferencia', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM transferencia WHERE id_transferencia = ?', [body.id_transferencia], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -292,7 +366,9 @@ app.put('/orden', function (req, res) {
     let body = req.body;
     conn.query('UPDATE orden SET estado=?, id_venta=?, id_repartidor=? WHERE id_orden = ?', [body.estado, body.id_venta, body.id_repartidor, body.id_orden], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -300,7 +376,9 @@ app.delete('/orden', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM orden WHERE id_orden = ?', [body.id_orden], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -358,9 +436,11 @@ app.post('/sede', function (req, res) {
 
 app.put('/sede', function (req, res) {
     let body = req.body;
-    conn.query('UPDATE sede SET alias=?, direccion=?, id_usuario=?, id_municipio=? WHERE id_sede = ?', [body.alias, body.direccion, body.id_usuario, body.id_municipio,body.id_sede], function (err, result) {
+    conn.query('UPDATE sede SET alias=?, direccion=?, id_usuario=?, id_municipio=? WHERE id_sede = ?', [body.alias, body.direccion, body.id_usuario, body.id_municipio, body.id_sede], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -368,7 +448,9 @@ app.delete('/sede', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM sede WHERE id_sede = ?', [body.id_sede], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -401,7 +483,9 @@ app.put('/bodega', function (req, res) {
     let body = req.body;
     conn.query('UPDATE bodega SET nombre=?, estado=?, id_sede=?, id_usuario=? WHERE id_bodega = ?', [body.nombre, body.estado, body.id_sede, body.id_usuario, body.id_bodega], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -409,7 +493,9 @@ app.delete('/bodega', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM bodega WHERE id_bodega = ?', [body.id_bodega], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -442,7 +528,9 @@ app.put('/cliente', function (req, res) {
     let body = req.body;
     conn.query('UPDATE cliente SET nombre=?, nit=?, dpi=?, direccion=?, id_sede=? WHERE id_cliente = ?', [body.nombre, body.nit, body.dpi, body.direccion, body.id_sede, body.id_cliente], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -450,7 +538,9 @@ app.delete('/cliente', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM cliente WHERE id_cliente = ?', [body.id_cliente], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -483,7 +573,9 @@ app.put('/producto', function (req, res) {
     let body = req.body;
     conn.query('UPDATE producto SET nombre=?, descripcion=?, precio=? WHERE id_producto = ?', [body.nombre, body.descripcion, body.precio, body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -491,7 +583,9 @@ app.delete('/producto', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM producto WHERE id_producto = ?', [body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -524,7 +618,9 @@ app.put('/categoria', function (req, res) {
     let body = req.body;
     conn.query('UPDATE categoria SET nombre=? WHERE id_categoria = ?', [body.nombre, body.id_categoria], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -532,7 +628,9 @@ app.delete('/categoria', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM categoria WHERE id_categoria = ?', [body.id_categoria], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -565,7 +663,9 @@ app.put('/usuario', function (req, res) {
     let body = req.body;
     conn.query('UPDATE usuario SET nombre=?, fecha_nacimiento=?, dpi=?, correo=?, password=SHA1(?) WHERE id_usuario = ?', [body.nombre, body.fecha_nacimiento, body.dpi, body.correo, body.password, body.id_usuario], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -573,7 +673,9 @@ app.delete('/usuario', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM usuario WHERE id_usuario = ?', [body.id_usuario], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -606,7 +708,9 @@ app.put('/venta', function (req, res) {
     let body = req.body;
     conn.query('UPDATE venta SET fecha_facturacion=?, fecha_entrega=?, id_cliente=?, id_usuario=? WHERE id_venta = ?', [body.fecha_facturacion, body.fecha_entrega, body.id_cliente, body.id_usuario, body.id_venta], function (err, result) {
         if (err) throw err;
-        res.send({ request: result});
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -614,7 +718,9 @@ app.delete('/venta', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM venta WHERE id_venta = ?', [body.id_venta], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -654,7 +760,9 @@ app.delete('/detalle_rol', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM detalle_rol WHERE id_rol = ? AND id_usuario = ?', [body.id_rol, body.id_usuario], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -694,7 +802,9 @@ app.delete('/detalle_venta', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM detalle_venta WHERE id_venta = ? AND id_producto = ?', [body.id_venta, body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
 
@@ -734,6 +844,8 @@ app.delete('/detalle_productocategoria', function (req, res) {
     let body = req.body;
     conn.query('DELETE FROM detalle_productocategoria WHERE id_categoria = ? AND id_producto = ?', [body.id_categoria, body.id_producto], function (err, result) {
         if (err) throw err;
-        res.send({ request: result });
+        res.send({
+            request: result
+        });
     });
 });
