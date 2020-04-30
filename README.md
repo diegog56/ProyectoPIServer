@@ -36,6 +36,8 @@ Funciones especificas:
 
 * **GET** /transferencia/interna transferencias entre la misma sede
 
+* **POST** /recoverpassword body:{correo} recuperar contraseña, se envia una contraseña temporal al correo especificado que tiene una validez de 15 minutos y solo sirve para iniciar sesión una vez
+
 **El formato para fecha es '%Y-%m-%d'**
 
 Nombre de las tablas y campos:
