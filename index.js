@@ -684,7 +684,7 @@ app.get('/detalle_venta/producto/:id', function (req, res) {
 app.post('/detalle_venta', function (req, res) {
     let body = req.body;
 
-    conn.query('INSERT INTO detalle_venta(id_venta,id_producto) VALUES(?,?)', [body.id_venta, body.id_producto], function (err, result) {
+    conn.query('INSERT INTO detalle_venta(id_venta,id_producto, cantidad, precio_venta) VALUES(?,?,?,?)', [body.id_venta, body.id_producto, body.cantidad, body.precio_venta], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
