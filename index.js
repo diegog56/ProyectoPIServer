@@ -42,6 +42,50 @@ app.get('/', function (req, res) {
 
 /* functions */
 
+//NOTIFY DELIVERY TRANSFER
+
+app.post('/notifydeliverytransfer', function (req, res) {
+    let body = req.body;
+    var mailOptions = {
+        from: 'publishesandsellsonline@gmail.com',
+        to: body.correo,
+        subject: 'Tranferencia #' + body.id_transferencia,
+        text: `BODEGAS\n
+    Se le notifica que la transferencia ` + body.id_transferencia+`
+    ha sido entregada exitosamente`
+    };
+    transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+            throw err;
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send("Notificacion enviada");
+        }
+    });
+});
+
+//NOTIFY DELIVERY SALE
+
+app.post('/notifydeliverysale', function (req, res) {
+    let body = req.body;
+    var mailOptions = {
+        from: 'publishesandsellsonline@gmail.com',
+        to: body.correo,
+        subject: 'Venta #' + body.id_venta,
+        text: `BODEGAS\n
+    Se le notifica que la venta ` + body.id_venta+`
+    ha sido entregada exitosamente`
+    };
+    transporter.sendMail(mailOptions, function (err, info) {
+        if (err) {
+            throw err;
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.send("Notificacion enviada");
+        }
+    });
+});
+
 //RECOVER PASSWORD
 
 app.post('/recoverpassword', function (req, res) {
