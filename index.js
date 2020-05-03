@@ -27,10 +27,6 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-app.get('/error', function (request, response) {
-    response.sendFile(__dirname + '/error.html');
-});
-
 /*APP*/
 var port = process.env.PORT || 3000;
 app.listen(port, function () {
