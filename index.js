@@ -351,7 +351,7 @@ app.get('/transferencia/:id', function (req, res) {
 app.post('/transferencia', function (req, res) {
     let body = req.body;
 
-    conn.query("INSERT INTO transferencia(id_transferencia, estado, id_bodega_ori, id_bodega_dest, id_bodeguero, fecha) VALUES(?,?,?,?,STR_TO_DATE(?,'%Y-%m-%d'))", [body.id_transferencia, body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha], function (err, result) {
+    conn.query("INSERT INTO transferencia(id_transferencia, estado, id_bodega_ori, id_bodega_dest, id_bodeguero, fecha) VALUES(?,?,?,?,?,STR_TO_DATE(?,'%Y-%m-%d'))", [body.id_transferencia, body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
