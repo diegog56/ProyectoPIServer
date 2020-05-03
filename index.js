@@ -307,7 +307,7 @@ app.get('/transferencia/:id', function (req, res) {
 app.post('/transferencia', function (req, res) {
     let body = req.body;
 
-    conn.query("INSERT INTO transferencia(estado, id_bodega_ori, id_bodega_dest, id_bodeguero, fecha) VALUES(?,?,?,?,STR_TO_DATE(?,'%Y-%m-%d'))", [body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha], function (err, result) {
+    conn.query("INSERT INTO transferencia(id_transferencia, estado, id_bodega_ori, id_bodega_dest, id_bodeguero, fecha) VALUES(?,?,?,?,STR_TO_DATE(?,'%Y-%m-%d'))", [body.id_transferencia, body.estado, body.id_bodega_ori, body.id_bodega_dest, body.id_bodeguero, body.fecha], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
@@ -559,7 +559,7 @@ app.get('/producto/:id', function (req, res) {
 app.post('/producto', function (req, res) {
     let body = req.body;
 
-    conn.query('INSERT INTO producto(nombre, descripcion, precio) VALUES(?,?,?)', [body.nombre, body.descripcion, body.precio], function (err, result) {
+    conn.query('INSERT INTO producto(nombre, descripcion, precio, cantidad) VALUES(?,?,?)', [body.nombre, body.descripcion, body.precio, body.cantidad], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
@@ -567,7 +567,7 @@ app.post('/producto', function (req, res) {
 
 app.put('/producto', function (req, res) {
     let body = req.body;
-    conn.query('UPDATE producto SET nombre=?, descripcion=?, precio=? WHERE id_producto = ?', [body.nombre, body.descripcion, body.precio, body.id_producto], function (err, result) {
+    conn.query('UPDATE producto SET nombre=?, descripcion=?, precio=?, cantidad=? WHERE id_producto = ?', [body.nombre, body.descripcion, body.precio, body.cantidad, body.id_producto], function (err, result) {
         if (err) throw err;
         res.send({
             request: result
