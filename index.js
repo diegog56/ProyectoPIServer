@@ -272,7 +272,7 @@ app.get('/detalle_transferencia/transferencia/:id', function (req, res) {
 app.post('/detalle_transferencia', function (req, res) {
     let body = req.body;
 
-    conn.query('INSERT INTO detalle_transferencia(id_transferencia,id_producto,cantidad) VALUES(?,?)', [body.id_transferencia, body.id_producto, body.cantidad], function (err, result) {
+    conn.query('INSERT INTO detalle_transferencia(id_transferencia,id_producto,cantidad) VALUES(?,?,?)', [body.id_transferencia, body.id_producto, body.cantidad], function (err, result) {
         if (err) throw err;
         res.send(result);
     });
